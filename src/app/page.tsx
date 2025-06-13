@@ -1,19 +1,16 @@
 import { Button } from "@/components/ui/button";
+import { ChartPieLabel } from "@/components/charts/pie-chart";
+import { ChartAreaGradient } from "@/components/charts/area-chart";
+import { ChartRadarDots } from "@/components/charts/radar-chart";
+import { Projects } from "@/components/projects-table";
 
 export default function Home() {
   return (
-    <div className="grid grid-cols-4 p-4">
-      <section className="flex flex-col gap-2">
-        <Button className="p-6 hover:cursor-pointer text-md bg-[#4CAF50] text-white hover:bg-[#449d48]">
-          Create Project
-        </Button>
-        <Button className="p-6 hover:cursor-pointer text-md bg-[#8E6E53] text-white hover:bg-[#7a5d47]">
-          Archive Project
-        </Button>
-        <Button className="p-6 hover:cursor-pointer text-md bg-[#3BAFDA] text-white hover:bg-[#3496c1]">
-          View Progress
-        </Button>
-      </section>
+    <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-3 px-4 py-8 items-stretch">
+      <ChartRadarDots />
+      <ChartAreaGradient />
+      <ChartPieLabel />
+      <Projects />
     </div>
   );
 }

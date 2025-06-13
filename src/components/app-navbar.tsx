@@ -53,7 +53,7 @@ const NavBar = () => {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-input">
-            <DropdownMenuLabel >My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <User />

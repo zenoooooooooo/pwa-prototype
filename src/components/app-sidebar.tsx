@@ -21,18 +21,12 @@ import {
 } from "@/components/ui/sidebar";
 
 import Link from "next/link";
-import { Button } from "./ui/button";
 
 const items = [
   {
     title: "Dashboard",
     url: "/",
     icon: Home,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
   },
   {
     title: "Categories",
@@ -54,22 +48,22 @@ const items = [
 export function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarHeader className="flex-row justify-center items-center p-4 font-bold hover:cursor-default">
+      <SidebarHeader className="flex-row justify-center items-center p-4 font-bold hover:cursor-default ">
         <Goal />
         SaaS Accountability PWA
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
+        <SidebarGroup className="px-0 ">
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem
                   key={item.title}
-                  className="p-4 hover:bg-accent active:bg-accent transition-colors duration-100 rounded-[8px]"
+                  className="p-4 w-full hover:bg-accent active:opacity-70 dark:hover:bg-[] transition-all duration-100"
                 >
                   <SidebarMenuButton
-                    className="text-lg justify-center font-semibold hover:bg-transparent active:bg-transparent"
+                    className="text-md font-semibold hover:bg-transparent active:bg-transparent"
                     asChild
                   >
                     <Link href={item.url}>
@@ -86,7 +80,9 @@ export function AppSidebar() {
       <SidebarFooter className="flex flex-col py-4 gap-4 items-center border-t">
         <Link
           href="#"
-          className="flex items-center justify-center gap-2 p-2 w-full bg-accent font-semibold rounded-[8px] hover:bg-primary transition-colors duration-100"
+          className="flex items-center justify-center gap-2 p-2 w-full 
+    bg-accent font-semibold rounded-[8px] transition-all duration-100
+    dark:bg-white dark:text-black hover:opacity-80"
         >
           <Gem />
           Upgrade Plan
