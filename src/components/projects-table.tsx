@@ -13,9 +13,8 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { Archive, ArrowUpDown, Eye, Pencil, Plus } from "lucide-react";
+import { Archive, Eye, Pencil, Plus } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
@@ -27,84 +26,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { IProject } from "@/interfaces/Project";
 
-export type Project = {
-  id: string;
-  project: string;
-  progress: number;
-  status: "pending" | "processing" | "success" | "failed";
-};
 
-const data: Project[] = [
-  {
-    id: "proj1",
-    project: "Portfolio Website",
-    progress: 85,
-    status: "success",
-  },
-  {
-    id: "proj2",
-    project: "E-Commerce App",
-    progress: 42,
-    status: "processing",
-  },
-  {
-    id: "proj3",
-    project: "Blog CMS",
-    progress: 60,
-    status: "processing",
-  },
-  {
-    id: "proj4",
-    project: "Task Manager CLI",
-    progress: 100,
-    status: "success",
-  },
-  {
-    id: "proj5",
-    project: "Real-Time Chat App",
-    progress: 30,
-    status: "pending",
-  },
-];
 
-export const columns: ColumnDef<Project>[] = [
+export const columns: ColumnDef<IProject>[] = [
   {
     accessorKey: "project",
-    header: () => <div className="text-center w-1/3">Projects</div>,
-    cell: ({ row }) => (
-      <div className="capitalize w-1/3">{row.getValue("project")}</div>
-    ),
+    header: () => <div className="text-center">Projects</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("project")}</div>,
   },
   {
     accessorKey: "progress",
-    header: () => <div className="text-center w-1/3">Progress</div>,
+    header: () => <div className="w-3/4 text-center">Progress</div>,
     cell: ({ row }) => {
       const progress = Number(row.getValue("progress"));
       return (
-        <div className="flex flex-col items-center w-1/3">
+        <div className="flex flex-col justify-center items-center w-3/4">
           <span className="text-sm font-medium mb-1">{progress}%</span>
           <Progress value={progress} className="w-full" />
         </div>
       );
     },
-  },
-  {
-    id: "actions",
-    header: () => <div className="text-center w-1/3">Actions</div>,
-    cell: () => (
-      <div className="flex justify-center items-center gap-4 w-1/3">
-        <Link href="#"  >
-          <Eye className="h-4 w-4" />
-        </Link>
-        <Link href="#"  >
-          <Pencil className="h-4 w-4" />
-        </Link>
-        <Link href="#"  >
-          <Archive className="h-4 w-4" />
-        </Link>
-      </div>
-    ),
   },
 ];
 
@@ -152,18 +95,24 @@ export function Projects() {
           />
         </div>
 
-        <Link
-          href="#"
-          className="text-white flex items-center justify-center gap-2 p-2
-          bg-accent font-semibold rounded-[8px] transition-all duration-100
-          dark:bg-white dark:text-black hover:opacity-80"
-        >
-          <Plus /> Create Project
-        </Link>
+        <div className="flex justify-end items-center gap-4 w-1/2 ">
+          <Link href="#">
+            <Plus className="h-5 w-5" />
+          </Link>
+          <Link href="#">
+            <Eye className="h-5 w-5" />
+          </Link>
+          <Link href="#">
+            <Pencil className="h-5 w-5" />
+          </Link>
+          <Link href="#">
+            <Archive className="h-5 w-5" />
+          </Link>
+        </div>
       </div>
 
       <div className="rounded-md border">
-        <Table>
+        <Table className="table-fixed">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
