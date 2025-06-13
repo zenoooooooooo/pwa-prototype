@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import connectToDB from "@/backend/db/connection";
+import { fetchProjects } from "@/backend/controllers/FetchProjectController";
 
 export async function GET() {
   try {
-    connectToDB();
+    await connectToDB();
 
-    return NextResponse.json({ message: "Hello There!" }, { status: 200 });
+    const res = await fetchProjects();
+
+    return NextResponse.json(
+      { message: res.message, data: res.data },
+      { status: 200 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
