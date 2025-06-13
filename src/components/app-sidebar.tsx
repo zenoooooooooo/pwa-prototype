@@ -1,37 +1,48 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import {
+  Archive,
+  ChartBarStacked,
+  Goal,
+  Home,
+  Search,
+  Settings,
+  Gem,
+} from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-// Menu items.
+import Link from "next/link";
+import { Button } from "./ui/button";
+
 const items = [
   {
-    title: "Home",
-    url: "#",
+    title: "Dashboard",
+    url: "/",
     icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
   },
   {
     title: "Search",
     url: "#",
     icon: Search,
+  },
+  {
+    title: "Categories",
+    url: "#",
+    icon: ChartBarStacked,
+  },
+  {
+    title: "Archived",
+    url: "#",
+    icon: Archive,
   },
   {
     title: "Settings",
@@ -43,18 +54,28 @@ const items = [
 export function AppSidebar() {
   return (
     <Sidebar>
+      <SidebarHeader className="flex-row justify-center items-center p-4 font-bold hover:cursor-default">
+        <Goal />
+        SaaS Accountability PWA
+      </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                <SidebarMenuItem
+                  key={item.title}
+                  className="p-4 hover:bg-accent active:bg-accent transition-colors duration-100 rounded-[8px]"
+                >
+                  <SidebarMenuButton
+                    className="text-lg justify-center font-semibold hover:bg-transparent active:bg-transparent"
+                    asChild
+                  >
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -62,6 +83,19 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="flex flex-col py-4 gap-4 items-center border-t">
+        <Link
+          href="#"
+          className="flex items-center justify-center gap-2 p-2 w-full bg-accent font-semibold rounded-[8px] hover:bg-primary transition-colors duration-100"
+        >
+          <Gem />
+          Upgrade Plan
+        </Link>
+
+        <div className="text-xs text-darkest">
+          © 2025 Zeno™ — All rights reserved.
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }
