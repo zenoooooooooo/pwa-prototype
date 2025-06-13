@@ -1,20 +1,15 @@
 "use client";
 
-import * as React from "react";
 import {
   ColumnDef,
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
+  getFilteredRowModel,
   useReactTable,
-  VisibilityState,
 } from "@tanstack/react-table";
-import { Archive, Eye, Pencil, Plus } from "lucide-react";
-
+import { Archive, CheckIcon, Eye, Pencil, Plus } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
@@ -27,55 +22,81 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { IProject } from "@/interfaces/IProject";
-
-export const columns: ColumnDef<IProject>[] = [
-  {
-    accessorKey: "project",
-    header: () => <div className="text-center">Projects</div>,
-    cell: ({ row }) => (
-      <div className="text-center">{row.getValue("project")}</div>
-    ),
-  },
-  {
-    accessorKey: "progress",
-    header: () => <div className="w-3/4 text-center">Progress</div>,
-    cell: ({ row }) => {
-      const progress = Number(row.getValue("progress"));
-      return (
-        <div className="flex flex-col justify-center items-center w-3/4">
-          <span className="text-sm font-medium mb-1">{progress}%</span>
-          <Progress value={progress} className="w-full" />
-        </div>
-      );
-    },
-  },
-];
+import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
 
 export function Projects() {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [projects, setProjects] = useState<IProject[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+
+  const fetchProjects = async () => {
+    try {
+      const res = await fetch("/api/fetch-project");
+      const json = await res.json();
+      setProjects(json.data);
+    } catch (error) {
+      console.error("Failed to fetch projects", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const columns: ColumnDef<IProject>[] = [
+    {
+      accessorKey: "title",
+      header: () => <div className="text-center">Projects</div>,
+      cell: ({ row }) => (
+        <div
+          className={`text-center cursor-pointer ${
+            selectedRowId === row.id ? "bg-accent text-white" : ""
+          }`}
+          onClick={() => {
+            setSelectedRowId(row.id);
+            console.log("Selected project id:", row.id);
+          }}
+        >
+          {row.getValue("title")}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "progress",
+      header: () => <div className="text-center">Progress</div>,
+      cell: ({ row }) => {
+        const progress = Number(row.getValue("progress"));
+        return (
+          <div
+            className="flex flex-col justify-center items-center cursor-pointer"
+            onClick={() => {
+              setSelectedRowId(row.id);
+              console.log("Selected project id:", row.id);
+            }}
+          >
+            <span className="text-sm font-medium mb-1">{progress}%</span>
+            <Progress value={progress} className="w-full" />
+          </div>
+        );
+      },
+    },
+  ];
 
   const table = useReactTable({
-    data,
+    data: projects,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
+    getRowId: (row) => row._id as string,
+    initialState: {
+      pagination: {
+        pageSize: 5,
+      },
     },
   });
 
@@ -85,13 +106,10 @@ export function Projects() {
         <div className="flex w-1/2 items-center py-4">
           <Input
             placeholder="Filter projects..."
-            value={
-              (table.getColumn("project")?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table.getColumn("project")?.setFilterValue(event.target.value)
-            }
             className="max-w-sm border border-accent outline-none dark:bg-black dark:text-white dark:border-gray-700"
+            onChange={(event) =>
+              table.getColumn("title")?.setFilterValue(event.target.value)
+            }
           />
         </div>
 
@@ -101,9 +119,6 @@ export function Projects() {
           </Link>
           <Link href="#">
             <Eye className="h-5 w-5" />
-          </Link>
-          <Link href="#">
-            <Pencil className="h-5 w-5" />
           </Link>
           <Link href="#">
             <Archive className="h-5 w-5" />
@@ -118,24 +133,28 @@ export function Projects() {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
                   </TableHead>
                 ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
                 >
+                  Loading...
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -158,6 +177,30 @@ export function Projects() {
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <span className="text-muted-foreground flex-1 text-sm">
+          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          {table.getPageCount()}
+        </span>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );
