@@ -1,4 +1,4 @@
-import { IProject } from "@/interfaces/Project";
+import { IProject } from "@/interfaces/IProject";
 import Project from "../db/models/Project";
 
 export async function createProject(project: IProject) {

@@ -26,15 +26,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IProject } from "@/interfaces/Project";
-
-
+import { IProject } from "@/interfaces/IProject";
 
 export const columns: ColumnDef<IProject>[] = [
   {
     accessorKey: "project",
     header: () => <div className="text-center">Projects</div>,
-    cell: ({ row }) => <div className="text-center">{row.getValue("project")}</div>,
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("project")}</div>
+    ),
   },
   {
     accessorKey: "progress",

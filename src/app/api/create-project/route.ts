@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDB from "@/backend/db/connection";
 import { createProject } from "@/backend/controllers/CreateProjectController";
-import { IProject } from "@/interfaces/Project";
+import { IProject } from "@/interfaces/IProject";
 
 export async function POST(req: NextRequest) {
   try {

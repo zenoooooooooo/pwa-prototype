@@ -4,5 +4,5 @@ export interface IProject extends Document {
   title: String;
   description: String;
   category: String;
-  goals: Goal[];
+  goals: IGoal[];
 }

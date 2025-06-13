@@ -1,4 +1,4 @@
-import { IProject } from "@/interfaces/Project";
+import { IProject } from "@/interfaces/IProject";
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 const GoalSchema = new Schema(
