@@ -3,11 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { title, category, isDone, projectId } = await req.json();
+    const { title, category, description, isDone, projectId } =
+      await req.json();
 
     const newGoal = await Goals.create({
       title,
       category,
+      description,
       isDone,
       projectId: projectId,
     });
