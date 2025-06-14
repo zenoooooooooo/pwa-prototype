@@ -15,12 +15,11 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-
     const res = await createProject(project);
 
     return NextResponse.json(
       { message: res.message, data: res.data },
-      { status: 200 }
+      { status: res.status }
     );
   } catch (error) {
     console.error(error);

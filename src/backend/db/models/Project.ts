@@ -1,20 +1,23 @@
+import { IGoal } from "@/interfaces/IGoal";
 import { IProject } from "@/interfaces/IProject";
-import mongoose, { Schema, Document, Types } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
-const GoalSchema = new Schema(
-  {
-    title: { type: String, required: true },
-    description: { type: String, default: "" },
-    isDone: { type: Boolean, default: false },
+const GoalSchema = new Schema<IGoal>({
+  title: { type: String, required: true },
+  description: { type: String, default: "" },
+  category: { type: String, required: true },
+  isDone: { type: Boolean, default: false },
+  projectId: {
+    type: Types.ObjectId,
+    ref: "Project",
+    required: true,
   },
-  { _id: false }
-);
+});
 
 const ProjectSchema = new Schema<IProject>(
   {
     title: { type: String, required: true },
     description: { type: String, default: "" },
-    category: { type: String, required: true },
     goals: { type: [GoalSchema], default: [] },
   },
   { timestamps: true }

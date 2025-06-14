@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { TrendingUp } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
   Card,
@@ -19,85 +19,107 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { getRandomColor } from "@/lib/utils";
+import { IProject } from "@/interfaces/IProject";
 
-export const description =
-  "An area chart with randomized red/orange gradient fill";
-
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
+type Props = {
+  project: IProject | null;
+  isLoading: boolean;
+};
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  completed: {
+    label: "Completed",
     color: "var(--chart-1)",
   },
-  mobile: {
-    label: "Mobile",
+  pending: {
+    label: "Pending",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
-export function ChartAreaGradient() {
-  const desktopColor = useMemo(() => getRandomColor(), []);
-  const mobileColor = useMemo(() => getRandomColor(), []);
+export function ChartAreaGradient({ project, isLoading }: Props) {
+  const completedColor = useMemo(() => getRandomColor(), []);
+  const pendingColor = useMemo(() => getRandomColor(), []);
+
+  const categoryMap: Record<string, { completed: number; pending: number }> =
+    {};
+
+  project?.goals.forEach((goal) => {
+    if (!categoryMap[goal.category]) {
+      categoryMap[goal.category] = { completed: 0, pending: 0 };
+    }
+    if (goal.isDone) {
+      categoryMap[goal.category].completed += 1;
+    } else {
+      categoryMap[goal.category].pending += 1;
+    }
+  });
+
+  const chartData = Object.entries(categoryMap).map(
+    ([category, { completed, pending }]) => ({
+      category,
+      completed,
+      pending,
+    })
+  );
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Area Chart - Red/Orange Gradient</CardTitle>
+        <CardTitle>Area Chart - Project Goals</CardTitle>
         <CardDescription className="text-card-foreground">
-          Showing total visitors for the last 6 months
+          {isLoading ? "Loading..." : "Goal completion breakdown per category"}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <AreaChart
-            accessibilityLayer
             data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
+            margin={{ left: 12, right: 12 }}
+            width={300}
+            height={250}
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="category"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
             />
+            <YAxis allowDecimals={false} />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <defs>
-              <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={desktopColor} stopOpacity={0.8} />
-                <stop offset="95%" stopColor={desktopColor} stopOpacity={0.1} />
+              <linearGradient id="fillCompleted" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor={completedColor}
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor={completedColor}
+                  stopOpacity={0.1}
+                />
               </linearGradient>
-              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={mobileColor} stopOpacity={0.8} />
-                <stop offset="95%" stopColor={mobileColor} stopOpacity={0.1} />
+              <linearGradient id="fillPending" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={pendingColor} stopOpacity={0.8} />
+                <stop offset="95%" stopColor={pendingColor} stopOpacity={0.1} />
               </linearGradient>
             </defs>
             <Area
-              dataKey="mobile"
+              dataKey="pending"
               type="natural"
-              fill="url(#fillMobile)"
+              fill="url(#fillPending)"
+              stroke={pendingColor}
               fillOpacity={0.4}
-              stroke={mobileColor}
               stackId="a"
             />
             <Area
-              dataKey="desktop"
+              dataKey="completed"
               type="natural"
-              fill="url(#fillDesktop)"
+              fill="url(#fillCompleted)"
+              stroke={completedColor}
               fillOpacity={0.4}
-              stroke={desktopColor}
               stackId="a"
             />
           </AreaChart>
@@ -105,10 +127,10 @@ export function ChartAreaGradient() {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Project overview <TrendingUp className="h-4 w-4" />
         </div>
         <div className="text-card-foreground flex items-center gap-2 leading-none">
-          January - June 2024
+          {project?.title}
         </div>
       </CardFooter>
     </Card>

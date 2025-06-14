@@ -17,32 +17,46 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { IProject } from "@/interfaces/IProject";
 
-export const description = "A radar chart with dots";
-
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 273 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-];
+type Props = {
+  project: IProject | null;
+  isLoading: boolean;
+};
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  completed: {
+    label: "Completed",
     color: "#5E7FA2",
   },
 } satisfies ChartConfig;
 
-export function ChartRadarDots() {
+export function ChartRadarDots({ project, isLoading }: Props) {
+  const categoryMap: Record<string, { total: number; completed: number }> = {};
+
+  project?.goals.forEach((goal) => {
+    if (!categoryMap[goal.category]) {
+      categoryMap[goal.category] = { total: 0, completed: 0 };
+    }
+    categoryMap[goal.category].total += 1;
+    if (goal.isDone) {
+      categoryMap[goal.category].completed += 1;
+    }
+  });
+
+  const chartData = Object.entries(categoryMap).map(
+    ([category, { total, completed }]) => ({
+      category,
+      progress: total === 0 ? 0 : completed / total,
+    })
+  );
+
   return (
     <Card>
       <CardHeader className="items-center">
-        <CardTitle>Radar Chart - Dots</CardTitle>
+        <CardTitle>Project Goal Progress</CardTitle>
         <CardDescription className="text-card-foreground">
-          Showing total visitors for the last 6 months
+          {isLoading ? "Loading..." : "Completed goals per category"}
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-0">
@@ -52,26 +66,23 @@ export function ChartRadarDots() {
         >
           <RadarChart data={chartData}>
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <PolarAngleAxis dataKey="month" />
+            <PolarAngleAxis dataKey="category" />
             <PolarGrid />
             <Radar
-              dataKey="desktop"
-              fill="var(--color-desktop)"
+              dataKey="progress"
+              fill="var(--color-completed)"
               fillOpacity={0.6}
-              dot={{
-                r: 4,
-                fillOpacity: 1,
-              }}
+              dot={{ r: 4, fillOpacity: 1 }}
             />
           </RadarChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Progress overview <TrendingUp className="h-4 w-4" />
         </div>
         <div className="text-card-foreground flex items-center gap-2 leading-none">
-          January - June 2024
+          Project: {project?.title}
         </div>
       </CardFooter>
     </Card>

@@ -71,7 +71,6 @@
   --primary: #eea029;
   --primary-foreground: #ececec;
 
-
   --secondary: #995d2b;
   --secondary-foreground: #ececec;
 
@@ -141,5 +140,21 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@supports (
+  (-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px))
+) {
+  .blur-me {
+    background: rgba(8, 8, 8, 0.7);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  .blur-me-dark {
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
   }
 }

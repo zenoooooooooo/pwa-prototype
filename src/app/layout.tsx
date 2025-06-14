@@ -5,6 +5,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import NavBar from "@/components/app-navbar";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +45,16 @@ export default function RootLayout({
               <hr />
               {children}
             </main>
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                classNames: {
+                  error: "!bg-black !text-white",
+                  description: "!text-white",
+                  
+                },
+              }}
+            />
           </SidebarProvider>
         </ThemeProvider>
       </body>
