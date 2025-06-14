@@ -68,8 +68,8 @@ export function ChartAreaGradient({ project, isLoading }: Props) {
       <CardHeader>
         <CardTitle>Area Chart - Project Goals</CardTitle>
         <CardDescription className="text-card-foreground">
-          {isLoading === "initial"
-            ? "Select a project to see graph"
+          {!project
+            ? "Select a project to see graph.."
             : isLoading
             ? "Loading..."
             : "Goal completion breakdown per category"}
@@ -134,7 +134,7 @@ export function ChartAreaGradient({ project, isLoading }: Props) {
           Project overview <TrendingUp className="h-4 w-4" />
         </div>
         <div className="text-card-foreground flex items-center gap-2 leading-none">
-          {project?.title}
+          Project: {project?.title}
         </div>
       </CardFooter>
     </Card>

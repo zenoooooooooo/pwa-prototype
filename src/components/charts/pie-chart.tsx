@@ -47,9 +47,10 @@ export function ChartPieLabel({ project, isLoading }: Props) {
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
         <CardTitle>Project Categories</CardTitle>
-        <CardDescription>
-          {isLoading === "initial"
-            ? "Select a project to see graph"
+
+        <CardDescription className="text-card-foreground">
+          {!project
+            ? "Select a project to see graph.."
             : isLoading
             ? "Loading..."
             : "Distribution by category"}

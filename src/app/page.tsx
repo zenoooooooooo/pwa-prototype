@@ -14,9 +14,7 @@ export default function Home() {
   const [isProjectsLoading, setIsProjectsLoading] = useState(true);
 
   const [project, setProject] = useState<ProjectWithGoals | null>(null);
-  const [isProjectLoading, setIsProjectLoading] = useState<boolean | string>(
-    "initial"
-  );
+  const [isProjectLoading, setIsProjectLoading] = useState<boolean>(true);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   );

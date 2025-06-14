@@ -21,7 +21,7 @@ import { ProjectWithGoals } from "@/interfaces/ProjectWithGoals";
 
 type Props = {
   project: ProjectWithGoals | null;
-  isLoading: boolean | string;
+  isLoading: boolean;
 };
 
 const chartConfig = {
@@ -55,9 +55,10 @@ export function ChartRadarDots({ project, isLoading }: Props) {
     <Card>
       <CardHeader className="items-center">
         <CardTitle>Project Goal Progress</CardTitle>
+        
         <CardDescription className="text-card-foreground">
-          {isLoading === "initial"
-            ? "Select a project to see graph"
+          {!project
+            ? "Select a project to see graph.."
             : isLoading
             ? "Loading..."
             : "Completed goals per category"}
