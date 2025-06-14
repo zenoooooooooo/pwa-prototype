@@ -18,76 +18,75 @@ export default function Home() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   );
-  const fetchProjects = async () => {
-    try {
-      const [projectsRes, goalsRes] = await Promise.all([
-        fetch("/api/fetch-projects"),
-        fetch("/api/fetch-goals"),
-      ]);
-
-      const projectsJson = await projectsRes.json();
-      const goalsJson = await goalsRes.json();
-
-      const fullProjects: ProjectWithGoals[] = projectsJson.data.map(
-        (project: IProject) => {
-          const projectGoals = goalsJson.data.filter(
-            (goal: IGoal) => goal.projectId === project._id
-          );
-
-          const totalGoals = projectGoals.length;
-          const completedGoals = projectGoals.filter(
-            (goal: IGoal) => goal.isDone
-          ).length;
-
-          const progress =
-            totalGoals > 0 ? (completedGoals / totalGoals) * 100 : 0;
-
-          return {
-            ...project,
-            goals: projectGoals,
-            progress: Math.round(progress),
-          };
-        }
-      );
-
-      setProjects(fullProjects);
-      console.log(fullProjects);
-    } catch (error) {
-      console.error("Failed to fetch projects and goals", error);
-    } finally {
-      setIsProjectsLoading(false);
-    }
-  };
-
-  const fetchProjectAndGoals = async () => {
-    if (!selectedProjectId) return;
-
-    try {
-      const res = await fetch(`/api/fetch-projects/${selectedProjectId}`);
-      const projectJson = await res.json();
-
-      const goalsRes = await fetch(`/api/fetch-goals/${selectedProjectId}`);
-      const goalsJson = await goalsRes.json();
-
-      const fullProject = {
-        ...projectJson.data,
-        goals: goalsJson.data,
-      };
-
-      console.log(fullProject);
-      setProject(fullProject);
-    } catch (error) {
-      console.error("Failed to fetch project and goals", error);
-    } finally {
-      setIsProjectLoading(false);
-    }
-  };
 
   useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const [projectsRes, goalsRes] = await Promise.all([
+          fetch("/api/fetch-projects"),
+          fetch("/api/fetch-goals"),
+        ]);
+
+        const projectsJson = await projectsRes.json();
+        const goalsJson = await goalsRes.json();
+
+        const fullProjects: ProjectWithGoals[] = projectsJson.data.map(
+          (project: IProject) => {
+            const projectGoals = goalsJson.data.filter(
+              (goal: IGoal) => goal.projectId === project._id
+            );
+
+            const totalGoals = projectGoals.length;
+            const completedGoals = projectGoals.filter(
+              (goal: IGoal) => goal.isDone
+            ).length;
+
+            const progress =
+              totalGoals > 0 ? (completedGoals / totalGoals) * 100 : 0;
+
+            return {
+              ...project,
+              goals: projectGoals,
+              progress: Math.round(progress),
+            };
+          }
+        );
+
+        setProjects(fullProjects);
+      } catch (error) {
+        console.error("Failed to fetch projects and goals", error);
+      } finally {
+        setIsProjectsLoading(false);
+      }
+    };
     fetchProjects();
   }, []);
 
   useEffect(() => {
+    const fetchProjectAndGoals = async () => {
+      if (!selectedProjectId) return;
+
+      try {
+        const res = await fetch(`/api/fetch-projects/${selectedProjectId}`);
+        const projectJson = await res.json();
+
+        const goalsRes = await fetch(`/api/fetch-goals/${selectedProjectId}`);
+        const goalsJson = await goalsRes.json();
+
+        const fullProject = {
+          ...projectJson.data,
+          goals: goalsJson.data,
+        };
+
+        console.log(fullProject);
+        setProject(fullProject);
+      } catch (error) {
+        console.error("Failed to fetch project and goals", error);
+      } finally {
+        setIsProjectLoading(false);
+      }
+    };
+
     setIsProjectLoading(true);
     fetchProjectAndGoals();
   }, [selectedProjectId]);

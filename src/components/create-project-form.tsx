@@ -5,7 +5,6 @@ import { Textarea } from "./ui/textarea";
 import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
-
 const CreateProject = () => {
   type FormValues = {
     title: string;
@@ -33,6 +32,15 @@ const CreateProject = () => {
 
       if (response.ok) {
         console.log("Project created successfully:", result);
+        toast.success("Goal created successfully!", {
+          style: {
+            background: "black",
+            color: "white",
+          },
+        });
+        reset();
+        window.location.reload();
+      } else {
         toast.error("Registration failed!", {
           description: "An error occurred. Please try again.",
           style: {
@@ -40,12 +48,16 @@ const CreateProject = () => {
             color: "white",
           },
         });
-        reset();
-      } else {
         console.error("Failed to create project:", result.message);
       }
     } catch (error) {
       console.error("Error posting project:", error);
+      toast.error("Something went wrong. Please try again.", {
+        style: {
+          background: "black",
+          color: "white",
+        },
+      });
     }
   };
 

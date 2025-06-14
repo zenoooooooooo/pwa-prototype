@@ -1,4 +1,4 @@
-import { Archive, Goal, Home, Settings, Gem } from "lucide-react";
+import { Goal, Home, Settings, Gem } from "lucide-react";
 
 import {
   Sidebar,

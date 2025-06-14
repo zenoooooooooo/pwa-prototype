@@ -9,45 +9,73 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChartRadarDots } from "@/components/charts/radar-chart";
 import { ChartAreaGradient } from "@/components/charts/area-chart";
 import { ChartPieLabel } from "@/components/charts/pie-chart";
-
+import { toast } from "sonner";
+import { IGoal } from "@/interfaces/IGoal";
 const ViewProgress = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { projectId } = useParams<{ projectId: string }>();
   const [project, setProject] = useState<ProjectWithGoals | null>(null);
   const [isProjectLoading, setIsProjectLoading] = useState(true);
 
-  const fetchProjectAndGoals = async () => {
-    if (!projectId) return;
-
+  const markGoalAsDone = async (goalId: string) => {
     try {
-      const res = await fetch(`/api/fetch-projects/${projectId}`);
-      const projectJson = await res.json();
+      const res = await fetch(`/api/set-done/${goalId}`, {
+        method: "PUT",
+      });
 
-      const goalsRes = await fetch(`/api/fetch-goals/${projectId}`);
-      const goalsJson = await goalsRes.json();
+      const result = await res.json();
 
-      const fullProject = {
-        ...projectJson.data,
-        goals: goalsJson.data,
-      };
-
-      console.log(fullProject);
-      setProject(fullProject);
+      if (res.ok) {
+        toast.success("Goal marked as done!", {
+          style: { background: "black", color: "white" },
+        });
+      } else {
+        toast.error(result.message, {
+          style: { background: "black", color: "white" },
+        });
+      }
     } catch (error) {
-      console.error("Failed to fetch project and goals", error);
+      console.error(error);
+      toast.error("Something went wrong.", {
+        style: { background: "black", color: "white" },
+      });
     } finally {
-      setIsProjectLoading(false);
+      window.location.reload();
     }
   };
 
   useEffect(() => {
+    const fetchProjectAndGoals = async () => {
+      if (!projectId) return;
+
+      try {
+        const res = await fetch(`/api/fetch-projects/${projectId}`);
+        const projectJson = await res.json();
+
+        const goalsRes = await fetch(`/api/fetch-goals/${projectId}`);
+        const goalsJson = await goalsRes.json();
+
+        const fullProject = {
+          ...projectJson.data,
+          goals: goalsJson.data,
+        };
+
+        console.log(fullProject);
+        setProject(fullProject);
+      } catch (error) {
+        console.error("Failed to fetch project and goals", error);
+      } finally {
+        setIsProjectLoading(false);
+      }
+    };
+
     fetchProjectAndGoals();
-  }, []);
+  }, [projectId]);
 
   return (
     <>
       <div className="p-4">
-        <h1 className="text-xl font-semibold my-4">Project's Progress</h1>
+        <h1 className="text-xl font-semibold my-4">Project&apos;s Progress</h1>
         <div className="grid lg:grid-cols-2 md:grid-cols-2 gap-4">
           <ChartRadarDots project={project} isLoading={isProjectLoading} />
           <div className="flex justify-center items-center">
@@ -65,7 +93,7 @@ const ViewProgress = () => {
 
         <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4">
           <h1 className="text-xl font-semibold my-4 col-span-full">
-            Project's Goals:
+            Project&apos;s Goals:
           </h1>
 
           <Card
@@ -77,12 +105,12 @@ const ViewProgress = () => {
             </div>
           </Card>
 
-          {project?.goals.map((goal: any) => (
-            <Card key={goal._id}>
+          {project?.goals.map((goal: IGoal) => (
+            <Card key={String(goal._id)} className="flex flex-col gap-4">
               <CardHeader>
                 <CardTitle className="text-lg">{goal.title}</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex flex-col gap-4">
                 <p className="text-sm text-muted-foreground">
                   {goal.description}
                 </p>
@@ -90,12 +118,22 @@ const ViewProgress = () => {
                   Status:{" "}
                   <span
                     className={`font-semibold ${
-                      goal.isCompleted ? "text-green-600" : "text-yellow-600"
+                      goal.isDone ? "text-green-600" : "text-yellow-600"
                     }`}
                   >
-                    {goal.isCompleted ? "Completed" : "In Progress"}
+                    {goal.isDone ? "Completed" : "In Progress"}
                   </span>
                 </p>
+                {!goal.isDone && (
+                  <button
+                    onClick={() => markGoalAsDone(String(goal._id))}
+                    className=" w-full 
+    bg-accent text-white p-2 font-semibold rounded-[8px] transition-all duration-100
+    dark:bg-white dark:text-black hover:opacity-80"
+                  >
+                    Mark as Done
+                  </button>
+                )}
               </CardContent>
             </Card>
           ))}

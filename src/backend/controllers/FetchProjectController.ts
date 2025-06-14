@@ -1,11 +1,8 @@
-import { IGoal } from "@/interfaces/IGoal";
 import Project from "../db/models/Project";
-import Goals from "../db/models/Goals";
 
 export async function fetchProjects() {
   try {
     const projects = await Project.find();
-
 
     return {
       message: "Projects fetched successfully",

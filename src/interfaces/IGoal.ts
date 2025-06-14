@@ -1,9 +1,9 @@
 import { Document, Types } from "mongoose";
 
 export interface IGoal extends Document {
-  title: String;
-  description: String;
+  title: string;
+  description: string;
   category: string;
-  isDone: String;
+  isDone: boolean;
   projectId: typeof Types.ObjectId;
 }

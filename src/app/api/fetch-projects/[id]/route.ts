@@ -3,20 +3,14 @@ import connectToDB from "@/backend/db/connection";
 import Project from "@/backend/db/models/Project";
 import { Types } from "mongoose";
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDB();
 
-    const { id } = params;
+    const { id } = await context.params;
 
     if (!Types.ObjectId.isValid(id)) {
       return NextResponse.json(

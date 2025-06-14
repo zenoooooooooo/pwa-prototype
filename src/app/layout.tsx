@@ -51,7 +51,6 @@ export default function RootLayout({
                 classNames: {
                   error: "!bg-black !text-white",
                   description: "!text-white",
-                  
                 },
               }}
             />

@@ -50,7 +50,7 @@ export function ChartPieLabel({ project, isLoading }: Props) {
 
         <CardDescription className="text-card-foreground">
           {!project
-            ? "Select a project to see graph.."
+            ? "Select a project to see graph..."
             : isLoading
             ? "Loading..."
             : "Distribution by category"}

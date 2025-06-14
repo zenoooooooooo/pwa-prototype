@@ -48,6 +48,7 @@ const CreateGoal = () => {
         });
         console.log("Goal created:", result);
         reset();
+        window.location.reload();
       } else {
         toast.error(`Failed to create goal: ${result.message}`, {
           style: {

@@ -1,6 +1,6 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import React, { useState } from "react";
+import React from "react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { Moon, Sun, User, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -16,14 +16,13 @@ import {
 import { Button } from "./ui/button";
 
 const NavBar = () => {
-  const [name, setName] = useState("John Doe");
   const { setTheme } = useTheme();
 
   return (
     <nav className="p-4 flex items-center justify-between">
       <SidebarTrigger />
       <div className="flex items-center gap-4">
-        <span className="font-semibold">Welcome, {name}!</span>
+        <span className="font-semibold">Welcome, John Doe!</span>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon">

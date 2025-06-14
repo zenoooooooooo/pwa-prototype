@@ -3,16 +3,13 @@ import connectToDB from "@/backend/db/connection";
 import Goals from "@/backend/db/models/Goals";
 import { Types } from "mongoose";
 
-type Props = {
-  params: {
-    projectId: string;
-  };
-};
-
-export async function GET(request: NextRequest, { params }: { params: { projectId: string } }) {
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ projectId: string }> }
+) {
   await connectToDB();
 
-  const { projectId } = await params;
+  const { projectId } = await context.params;
 
   if (!Types.ObjectId.isValid(projectId)) {
     return NextResponse.json(
@@ -28,4 +25,3 @@ export async function GET(request: NextRequest, { params }: { params: { projectI
     { status: 200 }
   );
 }
-
