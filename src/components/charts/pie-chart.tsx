@@ -19,9 +19,14 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { IProject } from "@/interfaces/IProject";
+import { IGoal } from "@/interfaces/IGoal";
+
+export type ProjectWithGoals = IProject & {
+  goals: IGoal[];
+};
 
 type Props = {
-  project: IProject | null;
+  project: ProjectWithGoals | null;
   isLoading: boolean;
 };
 

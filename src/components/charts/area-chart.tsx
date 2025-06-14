@@ -20,12 +20,16 @@ import {
 } from "@/components/ui/chart";
 import { getRandomColor } from "@/lib/utils";
 import { IProject } from "@/interfaces/IProject";
+import { IGoal } from "@/interfaces/IGoal";
 
-type Props = {
-  project: IProject | null;
-  isLoading: boolean;
+export type ProjectWithGoals = IProject & {
+  goals: IGoal[];
 };
 
+type Props = {
+  project: ProjectWithGoals | null;
+  isLoading: boolean;
+};
 const chartConfig = {
   completed: {
     label: "Completed",

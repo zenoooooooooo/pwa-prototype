@@ -1,40 +1,88 @@
 "use client";
+
 import { ChartPieLabel } from "@/components/charts/pie-chart";
 import { ChartAreaGradient } from "@/components/charts/area-chart";
 import { ChartRadarDots } from "@/components/charts/radar-chart";
 import { Projects } from "@/components/projects-table";
 import { useEffect, useState } from "react";
 import { IProject } from "@/interfaces/IProject";
+import { IGoal } from "@/interfaces/IGoal";
+
+export type ProjectWithGoals = IProject & {
+  goals: IGoal[];
+};
 
 export default function Home() {
-  const [projects, setProjects] = useState<[] | IProject[]>([]);
+  const [projects, setProjects] = useState<ProjectWithGoals[] | []>([]);
   const [isProjectsLoading, setIsProjectsLoading] = useState(true);
 
-  const [project, setProject] = useState<IProject | null>(null);
+  const [project, setProject] = useState<ProjectWithGoals | null>(null);
   const [isProjectLoading, setIsProjectLoading] = useState(true);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   );
-
   const fetchProjects = async () => {
     try {
-      const res = await fetch("/api/fetch-projects");
-      const json = await res.json();
-      setProjects(json.data);
+      const [projectsRes, goalsRes] = await Promise.all([
+        fetch("/api/fetch-projects"),
+        fetch("/api/fetch-goals"),
+      ]);
+
+      const projectsJson = await projectsRes.json();
+      const goalsJson = await goalsRes.json();
+
+      const fullProjects: ProjectWithGoals[] = projectsJson.data.map(
+        (project: IProject) => {
+          const projectGoals = goalsJson.data.filter(
+            (goal: IGoal) => goal.projectId === project._id
+          );
+
+          const totalGoals = projectGoals.length;
+          const completedGoals = projectGoals.filter(
+            (goal: IGoal) => goal.isDone
+          ).length;
+
+          const progress =
+            totalGoals > 0 ? (completedGoals / totalGoals) * 100 : 0;
+
+          return {
+            ...project,
+            goals: projectGoals,
+            progress: Math.round(progress),
+          };
+        }
+      );
+
+      setProjects(fullProjects);
+      console.log(fullProjects);
     } catch (error) {
-      console.error("Failed to fetch projects", error);
+      console.error("Failed to fetch projects and goals", error);
     } finally {
       setIsProjectsLoading(false);
     }
   };
 
-  const fetchProject = async () => {
+  const fetchProjectAndGoals = async () => {
+    if (!selectedProjectId) return;
+
     try {
       const res = await fetch(`/api/fetch-projects/${selectedProjectId}`);
-      const json = await res.json();
-      setProject(json.data);
+      const projectJson = await res.json();
+
+
+
+      const goalsRes = await fetch(`/api/fetch-goals/${selectedProjectId}`);
+      const goalsJson = await goalsRes.json();
+
+      const fullProject = {
+        ...projectJson.data,
+        goals: goalsJson.data,
+      };
+
+      console.log(fullProject);
+      setProject(fullProject);
     } catch (error) {
-      console.error("Failed to fetch projects", error);
+      console.error("Failed to fetch project and goals", error);
     } finally {
       setIsProjectLoading(false);
     }
@@ -45,7 +93,8 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    fetchProject();
+    setIsProjectLoading(true);
+    fetchProjectAndGoals();
   }, [selectedProjectId]);
 
   return (
