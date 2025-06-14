@@ -5,19 +5,18 @@ import { ChartAreaGradient } from "@/components/charts/area-chart";
 import { ChartRadarDots } from "@/components/charts/radar-chart";
 import { Projects } from "@/components/projects-table";
 import { useEffect, useState } from "react";
-import { IProject } from "@/interfaces/IProject";
+import { ProjectWithGoals } from "@/interfaces/ProjectWithGoals";
 import { IGoal } from "@/interfaces/IGoal";
-
-export type ProjectWithGoals = IProject & {
-  goals: IGoal[];
-};
+import { IProject } from "@/interfaces/IProject";
 
 export default function Home() {
   const [projects, setProjects] = useState<ProjectWithGoals[] | []>([]);
   const [isProjectsLoading, setIsProjectsLoading] = useState(true);
 
   const [project, setProject] = useState<ProjectWithGoals | null>(null);
-  const [isProjectLoading, setIsProjectLoading] = useState(true);
+  const [isProjectLoading, setIsProjectLoading] = useState<boolean | string>(
+    "initial"
+  );
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   );
@@ -68,8 +67,6 @@ export default function Home() {
     try {
       const res = await fetch(`/api/fetch-projects/${selectedProjectId}`);
       const projectJson = await res.json();
-
-
 
       const goalsRes = await fetch(`/api/fetch-goals/${selectedProjectId}`);
       const goalsJson = await goalsRes.json();

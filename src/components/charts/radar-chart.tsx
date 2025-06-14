@@ -17,16 +17,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { IProject } from "@/interfaces/IProject";
-import { IGoal } from "@/interfaces/IGoal";
-
-export type ProjectWithGoals = IProject & {
-  goals: IGoal[];
-};
+import { ProjectWithGoals } from "@/interfaces/ProjectWithGoals";
 
 type Props = {
   project: ProjectWithGoals | null;
-  isLoading: boolean;
+  isLoading: boolean | string;
 };
 
 const chartConfig = {
@@ -61,7 +56,11 @@ export function ChartRadarDots({ project, isLoading }: Props) {
       <CardHeader className="items-center">
         <CardTitle>Project Goal Progress</CardTitle>
         <CardDescription className="text-card-foreground">
-          {isLoading ? "Loading..." : "Completed goals per category"}
+          {isLoading === "initial"
+            ? "Select a project to see graph"
+            : isLoading
+            ? "Loading..."
+            : "Completed goals per category"}
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-0">

@@ -18,16 +18,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { IProject } from "@/interfaces/IProject";
-import { IGoal } from "@/interfaces/IGoal";
-
-export type ProjectWithGoals = IProject & {
-  goals: IGoal[];
-};
+import { ProjectWithGoals } from "@/interfaces/ProjectWithGoals";
 
 type Props = {
   project: ProjectWithGoals | null;
-  isLoading: boolean;
+  isLoading: boolean | string;
 };
 
 const chartConfig = {
@@ -53,7 +48,11 @@ export function ChartPieLabel({ project, isLoading }: Props) {
       <CardHeader className="items-center pb-0">
         <CardTitle>Project Categories</CardTitle>
         <CardDescription>
-          {isLoading ? "Loading..." : "Distribution by category"}
+          {isLoading === "initial"
+            ? "Select a project to see graph"
+            : isLoading
+            ? "Loading..."
+            : "Distribution by category"}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">

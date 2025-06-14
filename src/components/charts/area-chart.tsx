@@ -19,17 +19,13 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { getRandomColor } from "@/lib/utils";
-import { IProject } from "@/interfaces/IProject";
-import { IGoal } from "@/interfaces/IGoal";
-
-export type ProjectWithGoals = IProject & {
-  goals: IGoal[];
-};
+import { ProjectWithGoals } from "@/interfaces/ProjectWithGoals";
 
 type Props = {
   project: ProjectWithGoals | null;
-  isLoading: boolean;
+  isLoading: boolean | string;
 };
+
 const chartConfig = {
   completed: {
     label: "Completed",
@@ -72,7 +68,11 @@ export function ChartAreaGradient({ project, isLoading }: Props) {
       <CardHeader>
         <CardTitle>Area Chart - Project Goals</CardTitle>
         <CardDescription className="text-card-foreground">
-          {isLoading ? "Loading..." : "Goal completion breakdown per category"}
+          {isLoading === "initial"
+            ? "Select a project to see graph"
+            : isLoading
+            ? "Loading..."
+            : "Goal completion breakdown per category"}
         </CardDescription>
       </CardHeader>
       <CardContent>

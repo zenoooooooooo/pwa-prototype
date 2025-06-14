@@ -24,6 +24,7 @@ import { IProject } from "@/interfaces/IProject";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import CreateProject from "./create-project-form";
+import Link from "next/link";
 
 type ProjectsProps = {
   onSelectProject: (id: string) => void;
@@ -120,14 +121,11 @@ export function Projects({
             <Button
               variant="ghost"
               className="hover:cursor-pointer active:opacity-50 transition-all duration-100"
+              disabled={selectedRowId === null}
             >
-              <Eye className="h-5 w-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              className="hover:cursor-pointer active:opacity-50 transition-all duration-100"
-            >
-              <Archive className="h-5 w-5" />
+              <Link href={`/view-progress/${selectedRowId}`}>
+                <Eye className="h-5 w-5" />
+              </Link>
             </Button>
           </div>
         </div>

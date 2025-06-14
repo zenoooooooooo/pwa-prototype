@@ -1,12 +1,4 @@
-import {
-  Archive,
-  ChartBarStacked,
-  Goal,
-  Home,
-  Search,
-  Settings,
-  Gem,
-} from "lucide-react";
+import { Archive, Goal, Home, Settings, Gem } from "lucide-react";
 
 import {
   Sidebar,
@@ -27,16 +19,6 @@ const items = [
     title: "Dashboard",
     url: "/",
     icon: Home,
-  },
-  {
-    title: "Categories",
-    url: "#",
-    icon: ChartBarStacked,
-  },
-  {
-    title: "Archived",
-    url: "#",
-    icon: Archive,
   },
   {
     title: "Settings",
